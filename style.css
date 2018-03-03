@@ -46,6 +46,11 @@ a {
 	text-align: center;
 }
 
+#header {
+	font-weight:100;
+	font-size: 3em;
+}
+
 #header span {
 	font-weight: 600 !important;
 }

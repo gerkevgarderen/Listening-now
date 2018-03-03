@@ -28,7 +28,8 @@
 		<script type="text/javascript">
 			var current;
 			var authCode;
-
+			
+			// Get the authorisation code for Spotify with a local GET to the PHP file.
 			function updateAuth(){
 				$.ajax({
 					url: 'https://gerkevangarderen.nl/listening/spotify.php',
@@ -40,8 +41,9 @@
 				});
 			}
 			
+			// Get the current playing track
 			function currentTrack(){
-				var track, trackUrl, albumUrl, album, artist, artistUrl;
+				// GET request to Spotify for the details
 				$.ajax({
 					url: 'https://api.spotify.com/v1/me/player/currently-playing',
 					type: 'GET',
@@ -49,21 +51,26 @@
 						'Authorization' : 'Bearer '+ authCode
 					},
 					success: function(data) {
+						// If we get the data we need
 						if (data != undefined){
-							external=data;
-							
-							updateImage( data.item.album.images[0].url,
-								data.item.name,
-								data.item.external_urls.spotify,
-								data.item.artists[0].name,
-								data.item.artists[0].external_urls.spotify,
-								data.is_playing);
-							
-							updateAudio(data.item.preview_url);
-						} else {
+							if (current != data.item.external_urls.spotify){
+								current = data.item.external_urls.spotify;
+		
+								updateImage( data.item.album.images[0].url,
+									data.item.name,
+									data.item.external_urls.spotify,
+									data.item.artists[0].name,
+									data.item.artists[0].external_urls.spotify,
+									data.is_playing);
+								
+								updateAudio(data.item.preview_url);
+							}
+						} // Otherwise no track playing right now, so get previous track 
+						else {
 							previousTrack();
 						}
 					},
+					// If we get an error, check if the authorization is wrong and then update
 					error: function(xhr, status, error) {
 						if (error == "Unauthorized")
 							updateAuth();
@@ -72,7 +79,9 @@
 				
 			}
 			
+			// Get the previous playing track from Spotify
 			function previousTrack(){
+				// GET request to spotify for previous track
 				$.ajax({
 					url: 'https://api.spotify.com/v1/me/player/recently-played',
 					type: 'GET',
@@ -80,54 +89,35 @@
 						'Authorization' : 'Bearer ' + authCode
 					},
 					success: function(data) {
+						// If we get the data we need
 						if (data != undefined){
-							external=data;
-							
-							updateImage( data.items[0].track.album.images[0].url,
-								data.items[0].track.name,
-								data.items[0].track.external_urls.spotify,
-								data.items[0].track.artists[0].name,
-								data.items[0].track.artists[0].external_urls.spotify,
-								false);
-							
-							updateAudio(data.items[0].track.preview_url);
+							if (current != data.items[0].track.external_urls.spotify){
+								current = data.items[0].track.external_urls.spotify;
+								updateImage( data.items[0].track.album.images[0].url,
+									data.items[0].track.name,
+									data.items[0].track.external_urls.spotify,
+									data.items[0].track.artists[0].name,
+									data.items[0].track.artists[0].external_urls.spotify,
+									false);
+								
+								updateAudio(data.items[0].track.preview_url);
+							}
 						} else {
-							
+							// Otherwise something else is wrong. No implementation yet for what's next.
 						}
 					},
 					error: function(xhr, status, error) {
+						// If we get an error, check if the authorization is wrong and then update
 						if (error == "Unauthorized")
 							updateAuth();
 					}
 				});
 			}
 			
-			function updateAudio (url){
-				if (document.getElementById('audioSource').src != url){
-					document.getElementById('audioSource').src = url;
-					document.getElementById('audio').load();
-				}
-			}
-			
-			function updateImage(url,track, trackUrl,artist,artistUrl, listening){
-				if (current == trackUrl){
-					// do nothing, still the same song
-				} else {
-					current = trackUrl;
-					
-					getImageLightness(url, function(brightness) {
-						updateColor(brightness);
-					});
-					
-					$("#pic1").attr("src", url);
-					$('.background-image').css("background-image", "url(" + url + ")");
-					$('#description').html("<a href='" + trackUrl + "' target='_blank'>" + track + "</a>" + " by " + "<a href='" + artistUrl + "' target='_blank'>" + artist + "</a>");
-					
-					tenseOfText(listening);
-				}
-			}
-			
+			// Get the Auth code for the first time
 			updateAuth();
+			
+			// Update the current track each second
 			setInterval(currentTrack,1000);
 		</script>
 	</body>

@@ -48,10 +48,36 @@ function updateColor(i) {
 	return 0;
 }
 
+// Update Text based on whether it is the current song, or a most recently listened track
 function tenseOfText(nowplaying){
 	if (!nowplaying){
 		$('#header').html("Most <span>recent</span> listen")
 	} else {
 		$('#header').html("<span>Now</span> listening to")
+	}
+}
+
+// Update the image and text for the track
+function updateImage(url,track, trackUrl,artist,artistUrl, listening){
+	current = trackUrl;
+	console.log("check!");
+	
+	getImageLightness(url, function(brightness) {
+		updateColor(brightness);
+	});
+		
+	$("#pic1").attr("src", url);
+	$('.background-image').css("background-image", "url(" + url + ")");
+	$('#description').html("<a href='" + trackUrl + "' target='_blank'>" + track + "</a>" + " by " + "<a href='" + artistUrl + "' target='_blank'>" + artist + "</a>");
+
+	tenseOfText(listening);
+}
+
+// SPOTIFY ONLY
+// Update the audioplayer with the preview URL
+function updateAudio (url){
+	if (document.getElementById('audioSource').src != url){
+		document.getElementById('audioSource').src = url;
+		document.getElementById('audio').load();
 	}
 }

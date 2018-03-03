@@ -13,64 +13,51 @@
 <body>
 	<div class="background-image"></div>
 	<div class="content">
-			<div>
-			<span style="font-weight:100; font-size: 3em;" id="header" class="header">Loading.</span>
+		<div>
+			<span id="header" class="header">Loading.</span>
 			<p id="description" style="font-size: 1.5em;"></p>
 			<img id="pic1" crossOrigin="anonymous" url="" style="text-align"></img><br /><br />
-			
-			
-			
-			
 		</div>
 	</div>
 	
 	<script src="https://code.jquery.com/jquery-1.9.1.min.js"></script>
 	<script src="main.js"></script>
 	<script type="text/javascript">
-		var current;
 		var apiKey = 'b9a7eb116f0f1348587b25791d1dac9d';
-		var playing = 7;
+		var playing, current;
+		var external;
 		
-		function tenseOfText(nowplaying){
-			if (!nowplaying){
-				$('#header').html("Most <span>recent</span> listen")
-			} else {
-				$('#header').html("<span>Now</span> listening to")
-			}
-		}
-		
-		function updateImage(){
+		function getTrack(){
 			$.get("https://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=gerkevgarderen&api_key="+apiKey+"&format=json", function(data, status) {
 				var tmp = data.recenttracks.track[0];
+				var now, playing;
 				
-				if (current == tmp.url){
+				// Check if song is currently playing
+				if(!tmp["@attr"]){
+					now = false;
+				} else{
+					now = tmp["@attr"].nowplaying;
+				}
+				
+				if (current == tmp.url && now == playing){
 					// do nothing, same song still.
 				} else {
+					playing = now;
 					current = tmp.url;
 					
-					getImageLightness(tmp.image[3]["#text"], function(brightness) {
-						updateColor(brightness);
-					});
+					// Get url for artist
+					var d = '/', tok = tmp.url.split(d).slice(0,5), artistUrl = tok.join(d);
 					
+					// Get direct url to large-size album cover
 					var url = tmp.image[3]['#text'].replace(/.300x300/g,"");
-					$("#pic1").attr("src", url);
-					$('.background-image').css("background-image", "url(" + url + ")");
-					$('#description').html(tmp.name + " by " + tmp.artist["#text"]);
-					
-					var now;
-					if(!tmp["@attr"]){
-						now = false;
-					} else{
-						now = tmp["@attr"].nowplaying;
-					}
-					
-					tenseOfText(now);
+						
+					updateImage(url,tmp.name, tmp.url,tmp.artist["#text"],artistUrl, now);
 				}
 			});
 		}
 		
-		updateImage();
-		setInterval(updateImage,5000);
+		getTrack();
+		setInterval(getTrack,5000);
 	</script>
 </body>
 
