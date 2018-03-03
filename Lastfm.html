@@ -14,7 +14,7 @@
 	<div class="background-image"></div>
 	<div class="content">
 			<div>
-			<span style="font-weight:100; font-size: 3em;" id="header">Loading<span style="font-weight: 900 !important;">.</span></span>
+			<span style="font-weight:100; font-size: 3em;" id="header" class="header">Loading.</span>
 			<p id="description" style="font-size: 1.5em;"></p>
 			<img id="pic1" crossOrigin="anonymous" url="" style="text-align"></img><br /><br />
 			
@@ -25,69 +25,22 @@
 	</div>
 	
 	<script src="https://code.jquery.com/jquery-1.9.1.min.js"></script>
+	<script src="main.js"></script>
 	<script type="text/javascript">
-		function getImageLightness(imageSrc, callback) {
-			var img = document.createElement("img");
-			img.crossOrigin = "Anonymous";
-			img.src = imageSrc;
-			img.style.display = "none";
-			document.body.appendChild(img);
-
-			var colorSum = 0;
-
-			img.onload = function() {
-				// Copy from: https://stackoverflow.com/a/13763063
-				// create canvas
-				var canvas = document.createElement("canvas");
-				canvas.width = this.width;
-				canvas.height = this.height;
-
-				var ctx = canvas.getContext("2d");
-				ctx.drawImage(this, 0, 0);
-
-				var imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-				var data = imageData.data;
-				var r, g, b, avg;
-
-				for (var x = data.length/5, len = data.length / 2; x < len; x += 4) {
-					r = data[x];
-					g = data[x + 1];
-					b = data[x + 2];
-
-					avg = Math.floor((r + g + b) / 3);
-					colorSum += avg;
-				}
-
-				var brightness = Math.floor(colorSum / (this.width * this.height) * 2);
-				callback(brightness);
-			}
-		}
-
-		function updateColor(i) {
-			var color;
-			if (parseInt(i) > 122) {
-				color = 'black';
-			} else {
-				color = 'white';
-			}
-			document.body.style.color = color;
-			return 0;
-		}
-		
 		var current;
+		var apiKey = 'b9a7eb116f0f1348587b25791d1dac9d';
 		var playing = 7;
-		
 		
 		function tenseOfText(nowplaying){
 			if (!nowplaying){
-				$('#header').html("Most <span style=\"font-weight: 900 !important;\">recent</span> listen")
+				$('#header').html("Most <span>recent</span> listen")
 			} else {
-				$('#header').html("<span style=\"font-weight: 900 !important;\">Now</span> listening to")
+				$('#header').html("<span>Now</span> listening to")
 			}
 		}
 		
 		function updateImage(){
-			$.get("https://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=gerkevgarderen&api_key=b9a7eb116f0f1348587b25791d1dac9d&format=json", function(data, status) {
+			$.get("https://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=gerkevgarderen&api_key="+apiKey+"&format=json", function(data, status) {
 				var tmp = data.recenttracks.track[0];
 				
 				if (current == tmp.url){
@@ -111,10 +64,8 @@
 						now = tmp["@attr"].nowplaying;
 					}
 					
-						tenseOfText(now);
-					
+					tenseOfText(now);
 				}
-
 			});
 		}
 		

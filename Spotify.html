@@ -13,7 +13,7 @@
 		</div>
 		<div class="content">
 			<div>
-				<span style="font-weight:100; font-size: 3em;" id="header">Loading<span style="font-weight: 600 !important;">.</span></span>
+				<span style="font-weight:100; font-size: 3em;" class="header" id="header">Loading<span>.</span></span>
 				<p id="description" style="font-size: 1.5em;"></p>
 				<img id="pic1" crossOrigin="anonymous" url="" style="text-align"></img><br /><br />
 				<audio id="audio" controls>
@@ -24,67 +24,11 @@
 		</div>
 		
 		<script src="https://code.jquery.com/jquery-1.9.1.min.js"></script>
+		<script src="main.js"></script>
 		<script type="text/javascript">
-			function getImageLightness(imageSrc, callback) {
-				var img = document.createElement("img");
-				img.crossOrigin = "Anonymous";
-				img.src = imageSrc;
-				img.style.display = "none";
-				document.body.appendChild(img);
-
-				var colorSum = 0;
-
-				img.onload = function() {
-					// Copied from: https://stackoverflow.com/a/13763063
-					// create canvas
-					var canvas = document.createElement("canvas");
-					canvas.width = this.width;
-					canvas.height = this.height;
-
-					var ctx = canvas.getContext("2d");
-					ctx.drawImage(this, 0, 0);
-
-					var imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-					var data = imageData.data;
-					var r, g, b, avg;
-
-					for (var x = data.length/5, len = data.length / 2; x < len; x += 4) {
-						r = data[x];
-						g = data[x + 1];
-						b = data[x + 2];
-
-						avg = Math.floor((r + g + b) / 3);
-						colorSum += avg;
-					}
-
-					var brightness = Math.floor(colorSum / (this.width * this.height) * 2);
-					callback(brightness);
-				}
-			}
-
-			function updateColor(i) {
-				var color;
-				if (parseInt(i) > 122) {
-					color = 'black';
-				} else {
-					color = 'white';
-				}
-				document.body.style.color = color;
-				return 0;
-			}
-			
 			var current;
-			var playing = 7;
 			var authCode;
-			
-			function tenseOfText(nowplaying){
-				if (!nowplaying){
-					$('#header').html("Most <span style=\"font-weight: 600 !important;\">recent</span> listen")
-				} else {
-					$('#header').html("<span style=\"font-weight: 600 !important;\">Now</span> listening to")
-				}
-			}
-			
+
 			function updateAuth(){
 				$.ajax({
 					url: 'https://gerkevangarderen.nl/listening/spotify.php',
@@ -106,8 +50,7 @@
 					},
 					success: function(data) {
 						if (data != undefined){
-							console.log(data);
-							external=data
+							external=data;
 							
 							updateImage( data.item.album.images[0].url,
 								data.item.name,
@@ -138,8 +81,7 @@
 					},
 					success: function(data) {
 						if (data != undefined){
-							console.log(data);
-							external=data
+							external=data;
 							
 							updateImage( data.items[0].track.album.images[0].url,
 								data.items[0].track.name,
