@@ -32,7 +32,7 @@
 			// Get the authorisation code for Spotify with a local GET to the PHP file.
 			function updateAuth(){
 				$.ajax({
-					url: 'https://gerkevangarderen.nl/listening/spotify.php',
+					url: '../spotify.php',
 					type: 'GET',
 					success: function(data) {
 						authCode = data.access_token;
