@@ -46,6 +46,11 @@ a {
 	text-align: center;
 }
 
+audio::-webkit-media-controls-panel {
+    background: rgba(255,255,255,.4);
+    border-radius: 10px;
+}
+
 #header {
 	font-weight:100;
 	font-size: 3em;
