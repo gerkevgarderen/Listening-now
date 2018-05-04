@@ -10,7 +10,8 @@ h1 {
 
 img {
 	box-shadow: 0px 0px 20px -2px black;
-		max-width: 19vw;
+	max-width: 19vw;
+	border-radius: 10px;
 }
 
 a {
