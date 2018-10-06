@@ -18,6 +18,8 @@ a {
 	color:inherit;
 }
 
+
+
 .background-image {
 	background-color: rgba(0, 0, 0, 0.2);
 	background-blend-mode: darken;
@@ -59,4 +61,12 @@ audio::-webkit-media-controls-panel {
 
 #header span {
 	font-weight: 600 !important;
+}
+
+@media only screen and (max-device-width: 480px) {
+	img { max-width: 50vw;}
+	#header {
+		font-size: 5em;
+	}
+	audio {     width: 50vw;}
 }
